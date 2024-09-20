@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { HashRouter as Router, Route, Routes, NavLink } from "react-router-dom";
 import "./assets/App.css"
 import { Seller } from "./components/Seller";

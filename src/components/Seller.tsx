@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import "../assets/Seller.css";
 import { InputRef, Steps } from "antd";
-import { Button, Divider, List } from "antd";
+import { Button, List } from "antd";
 import algosdk from "algosdk";
 import { message, Input } from "antd";
 import { Arc18Client } from "./Arc18Client";
@@ -20,27 +20,6 @@ export const Seller = () => {
   );
   const [isOffering, setIsOffering] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
-
-  const success = (msg: string) => {
-    messageApi.open({
-      type: "success",
-      content: msg,
-    });
-  };
-
-  const error = (msg: string) => {
-    messageApi.open({
-      type: "error",
-      content: msg,
-    });
-  };
-
-  const warning = (msg: string) => {
-    messageApi.open({
-      type: "warning",
-      content: msg,
-    });
-  };
 
   const openMessage = (key: string, message: string) => {
     messageApi.open({
@@ -84,11 +63,6 @@ export const Seller = () => {
     "https://testnet-api.4160.nodely.dev",
     443
   );
-  const indexerClient = new algosdk.Indexer(
-    "a".repeat(64),
-    "https://testnet-idx.algonode.cloud",
-    443
-  );
 
   const appCaller = new Arc18Client(
     {
@@ -127,7 +101,7 @@ export const Seller = () => {
     });
     const signedXferTxn = xferTxn.signTxn(account.sk);
     await algodClient.sendRawTransaction(signedXferTxn).do();
-    const result = await algosdk.waitForConfirmation(
+    await algosdk.waitForConfirmation(
       algodClient,
       xferTxn.txID().toString(),
       3
@@ -221,12 +195,12 @@ export const Seller = () => {
       try {
         setIsOffering(true);
         if (address && algosdk.isValidAddress(address)) {
-          const optin_res = await appCaller.optIn.optInToApplication(
+          await appCaller.optIn.optInToApplication(
             {},
             { sender: account }
           );
 
-          const offer_res = await appCaller.offer(
+          await appCaller.offer(
             {
               royalty_asset: assetId,
               royalty_asset_amount: 1,

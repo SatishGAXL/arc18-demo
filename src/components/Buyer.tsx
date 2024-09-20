@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import "../assets/Seller.css";
 import { InputRef, Steps } from "antd";
-import { Button, Divider, List } from "antd";
+import { Button, List } from "antd";
 import algosdk from "algosdk";
 import { message, Input } from "antd";
 import * as algokit from "@algorandfoundation/algokit-utils";
@@ -18,23 +18,9 @@ export const Buyer = () => {
 
   const [messageApi, contextHolder] = message.useMessage();
 
-  const success = (msg: string) => {
-    messageApi.open({
-      type: "success",
-      content: msg,
-    });
-  };
-
   const error = (msg: string) => {
     messageApi.open({
       type: "error",
-      content: msg,
-    });
-  };
-
-  const warning = (msg: string) => {
-    messageApi.open({
-      type: "warning",
       content: msg,
     });
   };
@@ -81,12 +67,7 @@ export const Buyer = () => {
     "https://testnet-api.4160.nodely.dev",
     443
   );
-  const indexerClient = new algosdk.Indexer(
-    "a".repeat(64),
-    "https://testnet-idx.algonode.cloud",
-    443
-  );
-
+  
   const appCaller = new Arc18Client(
     {
       resolveBy: "id",
@@ -306,7 +287,7 @@ export const Buyer = () => {
           });
         const signed_asset_optin_txn = asset_optin_txn.signTxn(account.sk);
         await algodClient.sendRawTransaction(signed_asset_optin_txn).do();
-        const optin_res = await algosdk.waitForConfirmation(
+        await algosdk.waitForConfirmation(
           algodClient,
           asset_optin_txn.txID().toString(),
           3
@@ -319,7 +300,7 @@ export const Buyer = () => {
           suggestedParams,
           amount: algosdk.algosToMicroalgos(amountToBePaid),
         });
-        const res = await appCaller.transferAlgoPayment(
+        await appCaller.transferAlgoPayment(
           {
             royalty_asset: assetId,
             royalty_asset_amount: offeredAmount,
@@ -426,7 +407,7 @@ export const Buyer = () => {
     });
     const signedXferTxn = xferTxn.signTxn(account.sk);
     await algodClient.sendRawTransaction(signedXferTxn).do();
-    const result = await algosdk.waitForConfirmation(
+    await algosdk.waitForConfirmation(
       algodClient,
       xferTxn.txID().toString(),
       3
